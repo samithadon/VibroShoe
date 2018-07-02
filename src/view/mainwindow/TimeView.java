@@ -1,5 +1,6 @@
 package view.mainwindow;
 
+import java.awt.Toolkit;
 import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -114,13 +115,14 @@ public class TimeView extends HBox {
         playPause = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                    timeController.playPause();
+                timeController.playPause();
             }
         };
         // Start or stop the record of serial data.
         recordStop = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                Toolkit.getDefaultToolkit().beep();
                 timeController.recordStop();
             }
         };
