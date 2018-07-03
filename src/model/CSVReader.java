@@ -1,6 +1,6 @@
 package model;
 
-import exception.IncompatibleFileException;
+import exception.CSVFileException;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,10 +33,10 @@ public class CSVReader {
     /**
      * Read the CSV file and store the data.
      * @param filePath CSV file to read.
-     * @throws IncompatibleFileException If there is any problem to load the
+     * @throws CSVFileException If there is any problem to load the
      * file or to collect the data.
      */
-    public void loadFile(String filePath) throws IncompatibleFileException {
+    public void loadFile(String filePath) throws CSVFileException {
         resetData();
         try {
             flux = new FileInputStream(filePath);
@@ -59,7 +59,7 @@ public class CSVReader {
             buff.close();
             flux.close();
         } catch (IOException | NumberFormatException ex) {
-            throw new IncompatibleFileException();
+            throw new CSVFileException();
         }
     }
     

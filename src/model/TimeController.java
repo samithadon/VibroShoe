@@ -1,7 +1,9 @@
 package model;
 
-import exception.IncompatibleFileException;
+import exception.CSVFileException;
 import static java.lang.Thread.sleep;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -84,6 +86,11 @@ public class TimeController {
             sleep.setValue(false);
             serial.setValue(false);
             readCSV.setValue(false);
+            try {
+                Thread.sleep((long)(1500 * step));
+            } catch (InterruptedException ex) {
+                throw new CSVFileException();
+            }
             play.setValue(false);
             // Start the new one.
             loadIndexTotalTime();
@@ -93,7 +100,7 @@ public class TimeController {
             update();
             readCSV.setValue(true);
             (new Timer()).start();
-        } catch (IncompatibleFileException ex) {
+        } catch (CSVFileException ex) {
             (new ErrorWindow((ex.toString()))).show();
         }
     }
@@ -205,42 +212,42 @@ public class TimeController {
     
     /**
      * Load the time step from the CSV files.
-     * @throws IncompatibleFileException If the step of a file is different from
+     * @throws CSVFileException If the step of a file is different from
      * the other one or if the CSV files haven't been loaded properly.
      */
-    public void loadStep() throws IncompatibleFileException {
+    public void loadStep() throws CSVFileException {
         try {
             double step1 = rightShoe.getCsvReader().getTime(1) - rightShoe.getCsvReader().getTime(0);
             double step2 = leftShoe.getCsvReader().getTime(1) - leftShoe.getCsvReader().getTime(0);
             if (step1 != step2) {
-                throw new IncompatibleFileException();
+                throw new CSVFileException();
             }
             else {
                 step = step1;
             }
         } catch (Exception e) {
-            throw new IncompatibleFileException();
+            throw new CSVFileException();
         }
     }
     
     /**
      * Load the index of the last data of the CSV files.<br>
      * This index is equivalent to the total time in number of data.
-     * @throws IncompatibleFileException If the index of a file is different
+     * @throws CSVFileException If the index of a file is different
      * from the other one or if the CSV files haven't been loaded properly.
      */
-    public void loadIndexTotalTime() throws IncompatibleFileException {
+    public void loadIndexTotalTime() throws CSVFileException {
         try {
             int time1 = rightShoe.getCsvReader().getDataSize() - 1;
             int time2 = leftShoe.getCsvReader().getDataSize() - 1;
             if (time1 != time2) {
-                throw new IncompatibleFileException();
+                throw new CSVFileException();
             }
             else {
                 indexTotalTime.setValue(time1);
             }
         } catch (Exception e) {
-            throw new IncompatibleFileException();
+            throw new CSVFileException();
         }
     }
     

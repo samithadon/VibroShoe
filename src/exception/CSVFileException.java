@@ -9,13 +9,13 @@ package exception;
  * - The data of one file are not compatible with the other one.
  * @author Loïc David
  */
-public class IncompatibleFileException extends Exception {
+public class CSVFileException extends Exception {
 
     /**
-     * Return a string representation of IncompatibleFileException.
+     * Return a string representation of CSVFileException.
      * This representation is a message that can be displayed to the user.
      * @return The message for this exception.
-     * @see IncompatibleFileException
+     * @see CSVFileException
      */
     @Override
     public String toString() {

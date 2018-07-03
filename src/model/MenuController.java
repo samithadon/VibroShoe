@@ -1,6 +1,6 @@
 package model;
 
-import exception.IncompatibleFileException;
+import exception.CSVFileException;
 import exception.OtherConnectPortException;
 import exception.UsedPortException;
 import exception.WrongPortException;
@@ -71,7 +71,7 @@ public class MenuController {
             rightShoe.getCsvReader().loadFile(rightFile);
             leftShoe.getCsvReader().loadFile(leftFile);
             timeController.initializeCSVRead();
-        } catch (IncompatibleFileException e) {
+        } catch (CSVFileException e) {
             (new ErrorWindow(e.toString())).show();
         }
     }
