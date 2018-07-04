@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import model.CoP;
 import model.Shoe;
 
@@ -18,7 +19,7 @@ import model.Shoe;
  * @see CoP
  * @see Shoe
  */
-public class CoordinatesView extends HBox {
+public class CoordinatesView extends VBox {
     
     private final ShoeView shoeView;
 
@@ -40,13 +41,12 @@ public class CoordinatesView extends HBox {
         
         // Create the view.
         setStyle("-fx-border-width: 0 0 1 0;-fx-border-color: black");
+        setPrefWidth(262);
         
         Label copLabel = new Label("CoP: (None, None)");
-        Region fillRegion = new Region();
-        HBox.setHgrow(fillRegion, Priority.ALWAYS);
         Label cursorLabel = new Label("Cursor: (0, 0)");
         
-        getChildren().addAll(copLabel, fillRegion, cursorLabel);
+        getChildren().addAll(copLabel, cursorLabel);
         
         // Bind cursorLabel to cursor position.
         shoeView.xCursorProperty().addListener(new ChangeListener<Number>() {

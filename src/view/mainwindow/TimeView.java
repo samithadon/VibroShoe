@@ -80,11 +80,11 @@ public class TimeView extends HBox {
         playPauseButton.setDisable(true);
         // slider.
         slider = new Slider(0, 100, 10);
-        slider.setPrefSize(530, 30);
+        slider.setPrefSize(510, 30);
         slider.setDisable(true);
         // timeLabel.
         timeLabel = new Label("00:00");
-        timeLabel.setPrefSize(34, 30);
+        timeLabel.setPrefSize(54, 30);
         
         
         // Add components to TimeView.
