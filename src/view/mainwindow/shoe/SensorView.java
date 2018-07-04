@@ -48,7 +48,7 @@ public class SensorView extends Circle {
                 if (newValue.doubleValue() >= 0) {
                     double red = 0;
                     double green = 0;
-                    double v = newValue.doubleValue() / 1200;
+                    double v = newValue.doubleValue() / 600;
                     if (v < 1) {
                         red = v;
                         green = 1;
@@ -57,9 +57,8 @@ public class SensorView extends Circle {
                         red = 1;
                         green = 2 - v;
                     }
-                    else {
+                    else if (v < 3) {
                         red = 3 - v;
-                        green = 0;
                     }
                     setFill(Color.color(red, green, 0));
                 }

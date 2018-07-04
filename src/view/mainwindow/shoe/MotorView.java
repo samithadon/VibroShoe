@@ -58,7 +58,6 @@ public class MotorView extends Circle {
                 }
                 else {
                     red = 3 - v;
-                    green = 0;
                 }
                 setFill(Color.color(red, green, 0));
             }
