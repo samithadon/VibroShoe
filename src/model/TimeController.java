@@ -1,6 +1,9 @@
 package model;
 
 import exception.CSVFileException;
+import exception.OtherConnectPortException;
+import exception.UsedPortException;
+import exception.WrongPortException;
 import static java.lang.Thread.sleep;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -171,11 +174,23 @@ public class TimeController {
             play.setValue(false);
             rightShoe.getSerialReader().stopRead();
             leftShoe.getSerialReader().stopRead();
+            rightShoe.getSerialReader().closePort();
+            leftShoe.getSerialReader().closePort();
         }
         else {
-            play.setValue(true);
-            rightShoe.getSerialReader().startRead();
-            leftShoe.getSerialReader().startRead();
+            try {
+                rightShoe.getSerialReader().connect();
+                leftShoe.getSerialReader().connect();
+                play.setValue(true);
+                rightShoe.getSerialReader().startRead();
+                leftShoe.getSerialReader().startRead();
+            } catch (WrongPortException ex) {
+                (new ErrorWindow(ex.toString())).show();
+            } catch (UsedPortException ex) {
+                (new ErrorWindow(ex.toString())).show();
+            } catch (OtherConnectPortException ex) {
+                (new ErrorWindow(ex.toString())).show();
+            }
         }
     }
     

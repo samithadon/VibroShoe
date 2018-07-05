@@ -78,8 +78,8 @@ public class MenuController {
     
     /**
      * Start the serial reading.<br>
-     * Close the previous reading (CSV or serial) then connect to the serial
-     * ports then initialize the TimeController for the serial reading.
+     * Close the previous reading (CSV or serial) then
+     * initialize the TimeController for the serial reading.
      * @see TimeController
      */
     public void readSerial() {
@@ -87,16 +87,6 @@ public class MenuController {
         leftShoe.getSerialReader().stopRead();
         rightShoe.getSerialReader().closePort();
         leftShoe.getSerialReader().closePort();
-        try {
-            rightShoe.getSerialReader().connect();
-            leftShoe.getSerialReader().connect();
-        } catch (WrongPortException ex) {
-            (new ErrorWindow(ex.toString())).show();
-        } catch (UsedPortException ex) {
-            (new ErrorWindow(ex.toString())).show();
-        } catch (OtherConnectPortException ex) {
-            (new ErrorWindow(ex.toString())).show();
-        }
         timeController.initializeSerial();
     }
     

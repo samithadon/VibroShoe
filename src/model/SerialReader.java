@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Time;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -141,7 +142,6 @@ public final class SerialReader {
             int len;
             int lrIndex;
             String line = "";
-            System.out.println("start " + shoeModel.getSide().toString());
             try {
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter("././ressources/savedata" + shoeModel.getSide().toString() + ".csv"))) {
                     writer.write(header);
