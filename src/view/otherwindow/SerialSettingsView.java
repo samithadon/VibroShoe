@@ -208,7 +208,7 @@ public class SerialSettingsView extends Stage {
         // Initialize window.
         Scene scene = new Scene(mainVBox);
         setScene(scene);
-        setTitle("Serial settings");
+        setTitle("Serial ports settings");
         setResizable(false);
         sizeToScene();
         

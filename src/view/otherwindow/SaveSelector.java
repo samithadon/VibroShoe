@@ -117,6 +117,8 @@ public class SaveSelector extends Stage {
         // Initialize window.
         Scene scene = new Scene(vBox);
         setTitle("Select save files");
+        setResizable(false);
+        sizeToScene();
         setScene(scene);
         
     }

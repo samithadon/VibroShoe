@@ -1,9 +1,12 @@
 package view.mainwindow;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import view.mainwindow.shoe.ShoeView;
 import view.otherwindow.editshoe.ShoeEditor;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -22,6 +25,8 @@ public class MenuView extends MenuBar {
     private final MenuController menuController;
     private final ShoeView shoeViewLeft;
     private final ShoeView shoeViewRight;
+    private final CheckMenuItem onlySensorCheckMenuItem = new CheckMenuItem("Only sensors");
+    private final CheckMenuItem allDataCheckMenuItem = new CheckMenuItem("All data");
     
     /**
      * Create a new instance of MenuView.
@@ -49,8 +54,8 @@ public class MenuView extends MenuBar {
         MenuItem csvMenuItem = new MenuItem("Read a CSV file");
         MenuItem serialMenuItem = new MenuItem("Read data from serial");
         MenuItem saveMenuItem = new MenuItem("Save serial data");
-        MenuItem quitMenuItem = new MenuItem("Quit");
-        fileMenu.getItems().addAll(csvMenuItem, serialMenuItem, saveMenuItem, quitMenuItem);
+        MenuItem exitMenuItem = new MenuItem("Exit");
+        fileMenu.getItems().addAll(csvMenuItem, serialMenuItem, saveMenuItem, exitMenuItem);
         
         // Connect menus to methods.
         // csvMenuItem.
@@ -77,9 +82,9 @@ public class MenuView extends MenuBar {
                 (new SaveSelector(menuController)).show();
             }
         });
-        // quitMenuItem.
-        // Quit the software.
-        quitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+        // exitMenuItem.
+        // Exit the software.
+        exitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 menuController.quit();
@@ -91,15 +96,51 @@ public class MenuView extends MenuBar {
         
         // Create menus.
         Menu settingsMenu = new Menu("Settings");
-        MenuItem serialSettingsMenuItem = new MenuItem("Serial");
+        Menu serialSettingsMenu = new Menu("Serial");
+        MenuItem portsMenuItem = new MenuItem("Ports");
+        Menu dataTypeMenu = new Menu("Data type");
+        dataTypeMenu.getItems().addAll(allDataCheckMenuItem, onlySensorCheckMenuItem);
+        serialSettingsMenu.getItems().addAll(portsMenuItem, dataTypeMenu);
         MenuItem leftShoeMenuItem = new MenuItem("Left shoe");
         MenuItem rightShoeMenuItem = new MenuItem("Right shoe");
-        settingsMenu.getItems().addAll(serialSettingsMenuItem, leftShoeMenuItem, rightShoeMenuItem);
+        settingsMenu.getItems().addAll(serialSettingsMenu, leftShoeMenuItem, rightShoeMenuItem);
+        
+        // Initialize CheckMenuItems.
+        if (menuController.getLeftShoe().getSerialReader().getDataType() == 0) {
+            allDataCheckMenuItem.setSelected(true);
+            allDataCheckMenuItem.setDisable(true);
+        }
+        else {
+            onlySensorCheckMenuItem.setSelected(true);
+            onlySensorCheckMenuItem.setDisable(true);
+        }
+        allDataCheckMenuItem.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                onlySensorCheckMenuItem.setSelected(!newValue);
+                onlySensorCheckMenuItem.setDisable(false);
+                if (newValue) {
+                    allDataCheckMenuItem.setDisable(true);
+                    menuController.changeDataType(0);
+                }
+            }
+        });
+        onlySensorCheckMenuItem.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                allDataCheckMenuItem.setSelected(!newValue);
+                allDataCheckMenuItem.setDisable(false);
+                if (newValue) {
+                    onlySensorCheckMenuItem.setDisable(true);
+                    menuController.changeDataType(1);
+                }
+            }
+        });
         
         // Connect menus to methods.
         // serialSettingsMenuItem.
         // Open a window to choose the serial settings.
-        serialSettingsMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+        portsMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 (new SerialSettingsView(menuController)).show();

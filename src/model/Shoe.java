@@ -104,7 +104,8 @@ public class Shoe {
                         String[] coordinates = line.split(" ");
                         double x = Double.parseDouble(coordinates[0]);
                         double y = Double.parseDouble(coordinates[1]);
-                        sensors.add(new Sensor(x, y, side));
+                        int grp = Integer.parseInt(coordinates[2]);
+                        sensors.add(new Sensor(x, y, side, grp));
                     }
                 }
             }

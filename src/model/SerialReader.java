@@ -15,7 +15,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Time;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -35,6 +34,7 @@ public final class SerialReader {
     private int dataBits;
     private int stopBits;
     private int parity;
+    private int dataType;
     private boolean record = false;
     private final Shoe shoeModel;
     private final DoubleProperty time = new SimpleDoubleProperty(0);
@@ -174,8 +174,13 @@ public final class SerialReader {
     }
     
     /**
+     * If the data type is "All data":
      * Write the line in a temporary save file and split it to get the data.
      * Then, convert the data to send them.
+     * If the data type is "Only sensors":
+     * Split the line to get the data. Then, convert the data to calculate all
+     * the other data and send them. Finally, write the data in a temporary
+     * save file.
      * @param str The line to analize and send.
      * @param writer The writer to write the line in the save file.
      */
@@ -184,23 +189,119 @@ public final class SerialReader {
             try {
                 String[] data = str.split(";");
                 double t = Double.parseDouble(data[0]);
-                    time.setValue(t);
-                for (int i = 1; i < shoeModel.getSensors().size() + 1; i++) {
-                    shoeModel.getSensors().get(i - 1).valueProperty().setValue(Double.parseDouble(data[i]));
+                time.setValue(t);
+                // Data type = "All data".
+                if (dataType == 0) {
+                    for (int i = 1; i < shoeModel.getSensors().size() + 1; i++) {
+                        shoeModel.getSensors().get(i - 1).valueProperty().setValue(Double.parseDouble(data[i]));
+                    }
+                    for (int i = shoeModel.getSensors().size() + 1; i < 2 * shoeModel.getSensors().size() + 1; i++) {
+                        shoeModel.getSensors().get(i - 17).pressureProperty().setValue(Double.parseDouble(data[i]));
+                    }
+                    for (int i = 2 * shoeModel.getSensors().size() + 1; i < 2 * shoeModel.getSensors().size() + shoeModel.getMotors().size() + 1; i++) {
+                        shoeModel.getMotors().get(i - 33).valueProperty().setValue(Double.parseDouble(data[i]));
+                    }
+                    shoeModel.getCop().xProperty().setValue(Double.parseDouble(data[2 * shoeModel.getSensors().size() + shoeModel.getMotors().size() + 1]));
+                    shoeModel.getCop().yProperty().setValue(Double.parseDouble(data[2 * shoeModel.getSensors().size() + shoeModel.getMotors().size() + 2]));
+                    writer.append(str);
                 }
-                for (int i = shoeModel.getSensors().size() + 1; i < 2 * shoeModel.getSensors().size() + 1; i++) {
-                    shoeModel.getSensors().get(i - 17).pressureProperty().setValue(Double.parseDouble(data[i]));
+                // Data type = "Only sensors".
+                else {
+                    // Save sensor values and compute sensor pressures.
+                    for (int i = 1; i < shoeModel.getSensors().size() + 1; i++) {
+                        double sensor = Double.parseDouble(data[i]);
+                        double pressure;
+                        if (sensor > 662) {
+                            pressure = 0.000274 * Math.pow(sensor, 3) - 0.6555 * Math.pow(sensor, 2) + 524.6 * sensor - 139500;  
+                        }
+                        else if (sensor > 100) {
+                            pressure = 0.0002479 * Math.pow(sensor, 2) + 0.1935 * sensor + 132;
+                        }
+                        else {
+                            pressure = 0;
+                        }
+                        shoeModel.getSensors().get(i - 1).valueProperty().setValue(sensor);
+                        shoeModel.getSensors().get(i - 1).pressureProperty().setValue(pressure);
+                    }
+                    // Compute CoP.
+                    double sumP = 0;
+                    double sumXP = 0;
+                    double sumYP = 0;
+                    for (Sensor s : shoeModel.getSensors()) {
+                        if (s.getGroup() == 1) {
+                            sumP += s.pressureProperty().getValue();
+                            sumXP += s.pressureProperty().getValue() * s.getX();
+                            sumYP += s.pressureProperty().getValue() * s.getY();
+                        }
+                    }
+                    double meanP1 = sumP / 12;
+                    double Xcop1;
+                    double Ycop1;
+                    if (meanP1 == 0) {
+                        Xcop1 = 0;
+                        Ycop1 = 0;
+                    }
+                    else {
+                        Xcop1 = sumXP / sumP;
+                        Ycop1 = sumYP / sumP;
+                    }
+                    sumP = 0;
+                    sumXP = 0;
+                    sumYP = 0;
+                    for (Sensor s : shoeModel.getSensors()) {
+                        if (s.getGroup() != 1) {
+                            sumP += s.pressureProperty().getValue();
+                            sumXP += s.pressureProperty().getValue() * s.getX();
+                            sumYP += s.pressureProperty().getValue() * s.getY();
+                        }
+                    }
+                    double meanP2 = sumP / 4;
+                    double Xcop2;
+                    double Ycop2;
+                    if (meanP2 == 0) {
+                        Xcop2 = 0;
+                        Ycop2 = 0;
+                    }
+                    else {
+                        Xcop2 = sumXP / sumP;
+                        Ycop2 = sumYP / sumP;
+                    }
+                    double Xcop;
+                    double Ycop;
+                    if (meanP1 == 0 && meanP2 == 0) {
+                        Xcop = -1000;
+                        Ycop = -1000;
+                    }
+                    else {
+                        Xcop = (meanP1 * Xcop1 + meanP2 * Xcop2) / (meanP1 + meanP2);
+                        Ycop = (meanP1 * Ycop1 + meanP2 * Ycop2) / (meanP1 + meanP2);
+                    }
+                    shoeModel.getCop().xProperty().setValue(Xcop);
+                    shoeModel.getCop().yProperty().setValue(Ycop);
+                    // Compute motor values.
+                    for (int i = 0; i < shoeModel.getMotors().size(); i++) {
+                        if (Ycop < -80 || (i != 3 && i != 7)) {
+                            shoeModel.getMotors().get(i).valueProperty().setValue(0);
+                        }
+                        else {
+                            shoeModel.getMotors().get(i).valueProperty().setValue(1);                                
+                        }
+                    }
+                    // Save data in file.
+                    String line = str.substring(0, str.length() - 1);
+                    for (Sensor s : shoeModel.getSensors()) {
+                        line += ";" + s.pressureProperty().getValue();
+                    }
+                    for (Motor m : shoeModel.getMotors()) {
+                        line += ";" + m.valueProperty().getValue();
+                    }
+                    line += ";" + Xcop + ";" + Ycop + "\n";
+                    writer.append(line);
                 }
-                for (int i = 2 * shoeModel.getSensors().size() + 1; i < 2 * shoeModel.getSensors().size() + shoeModel.getMotors().size() + 1; i++) {
-                    shoeModel.getMotors().get(i - 33).valueProperty().setValue(Double.parseDouble(data[i]));
-                }
-                shoeModel.getCop().xProperty().setValue(Double.parseDouble(data[2 * shoeModel.getSensors().size() + shoeModel.getMotors().size() + 1]));
-                shoeModel.getCop().yProperty().setValue(Double.parseDouble(data[2 * shoeModel.getSensors().size() + shoeModel.getMotors().size() + 2]));
-                writer.append(str + "\n");
             } catch (Exception e) {
                 // If there is a problem to analyse the line, we just do nothing and wait the next one.
             }
-        });  
+        });
     }
     
     /**
@@ -268,6 +369,22 @@ public final class SerialReader {
      */
     public int getParity() {
         return parity;
+    }
+    
+    /**
+     * Getter for the data type.
+     * @return The data type.
+     */
+    public int getDataType() {
+        return dataType;
+    }
+    
+    /**
+     * Setter for the data type.
+     * @param dataType 0 for "All data", 1 for "Only sensors".
+     */
+    public void setDataType(int dataType) {
+        this.dataType = dataType;
     }
       
 }

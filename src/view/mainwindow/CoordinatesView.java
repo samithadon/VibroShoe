@@ -4,9 +4,6 @@ import view.mainwindow.shoe.ShoeView;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import model.CoP;
 import model.Shoe;
@@ -66,22 +63,26 @@ public class CoordinatesView extends VBox {
         shoeView.getModel().getCop().xProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (newValue.doubleValue() > 500) {
+                if (newValue.doubleValue() > 500 || newValue.doubleValue() < -500) {
                     copLabel.setText("CoP: (None, None)");
                 }
                 else {
-                    copLabel.setText("CoP: (" + newValue.doubleValue() + ", " + shoeView.getModel().getCop().yProperty().getValue() + ")");
+                    double x = (double)((int)(newValue.doubleValue() * 100)) / 100;
+                    double y = (double)((int)(shoeView.getModel().getCop().yProperty().getValue() * 100)) / 100;
+                    copLabel.setText("CoP: (" + x + ", " + y + ")");
                 }
             }
         });
         shoeView.getModel().getCop().yProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (newValue.doubleValue() > 500) {
+                if (newValue.doubleValue() > 500 || newValue.doubleValue() < -500) {
                     copLabel.setText("CoP: (None, None)");
                 }
                 else {
-                    copLabel.setText("CoP: (" + shoeView.getModel().getCop().xProperty().getValue() + ", " + newValue.doubleValue() + ")");
+                    double y = (double)((int)(newValue.doubleValue() * 100)) / 100;
+                    double x = (double)((int)(shoeView.getModel().getCop().xProperty().getValue() * 100)) / 100;
+                    copLabel.setText("CoP: (" + x + ", " + y + ")");
                 }
             }
         });

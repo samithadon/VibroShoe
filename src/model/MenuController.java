@@ -1,13 +1,14 @@
 package model;
 
 import exception.CSVFileException;
-import exception.OtherConnectPortException;
-import exception.UsedPortException;
-import exception.WrongPortException;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class MenuController {
         this.timeController = timeController;
         this.leftShoe = leftShoe;
         this.rightShoe = rightShoe;
+        loadDataType();
     }
     
     /**
@@ -138,6 +140,52 @@ public class MenuController {
     }
     
     /**
+     * Set the shoes data type by reading it from the save file.
+     * (ressources/datatype.txt)
+     */
+    public void loadDataType() {
+        InputStream flux;
+        try {
+            flux = new FileInputStream("././ressources/datatype.txt");
+            BufferedReader buff;
+            try (InputStreamReader inputStreamReader = new InputStreamReader(flux)) {
+                buff = new BufferedReader(inputStreamReader);
+                String line;
+                line = buff.readLine();
+                int type = Integer.parseInt(line);
+                leftShoe.getSerialReader().setDataType(type);
+                rightShoe.getSerialReader().setDataType(type);
+            }
+            buff.close();
+            flux.close();
+        } catch (IOException | NumberFormatException ex) {
+            (new ErrorWindow("Error loading data type!")).show();
+        }
+    }
+    
+    /**
+     * Update the save file containing the data type.
+     * @param type 0 for "All data", 1 for "Only sensors".
+     */
+    private void saveDataType(int type) {
+        try (FileWriter fileWriter = new FileWriter("././ressources/datatype.txt");
+                BufferedWriter writer = new BufferedWriter(fileWriter)) {
+            writer.write(type + "\n");
+        } catch (IOException ex) {
+            (new ErrorWindow("The data type have not been saved!")).show();
+        }
+    }
+    
+    /**
+     * Change the data type.
+     * @param type 0 for "All data", 1 for "Only sensors".
+     */
+    public void changeDataType(int type) {
+        saveDataType(type);
+        loadDataType();
+    }
+    
+    /**
      * Update the settings (sensors and motors) of a Shoe.
      * @param shoeView The View of the updated shoe.
      * @param xSensors List of the X coordinates of the sensors in the
@@ -148,16 +196,17 @@ public class MenuController {
      * coordinate system of the shoe.
      * @param yMotors List of the Y coordinates of the motors in the
      * coordinate system of the shoe.
+     * @param sensorGroups List of the groups of the sensors.
      * @see Shoe
      * @see Sensor
      * @see Motor
      */
-    public void updateShoeSettings(ShoeView shoeView, ArrayList<Double> xSensors, ArrayList<Double> ySensors, ArrayList<Double> xMotors, ArrayList<Double> yMotors) {
+    public void updateShoeSettings(ShoeView shoeView, ArrayList<Double> xSensors, ArrayList<Double> ySensors, ArrayList<Double> xMotors, ArrayList<Double> yMotors, ArrayList<Integer> sensorGroups) {
         try { 
             FileWriter fileWriter = new FileWriter("././ressources/sensors" + shoeView.getModel().getSide().toString() + ".txt");
             BufferedWriter writer = new BufferedWriter(fileWriter);
             for (int i = 0; i < xSensors.size(); i++) {
-                    writer.append(xSensors.get(i).intValue() + " " + ySensors.get(i).intValue() + "\n");
+                    writer.append(xSensors.get(i).intValue() + " " + ySensors.get(i).intValue() + " " + sensorGroups.get(i) + "\n");
                 }
             writer.close();
             fileWriter.close();

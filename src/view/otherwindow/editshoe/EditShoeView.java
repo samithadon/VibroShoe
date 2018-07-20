@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import model.Motor;
 import model.Sensor;
@@ -37,6 +38,7 @@ public class EditShoeView  extends Pane {
     private final ArrayList<SensorView> sensors = new ArrayList<>();
     private final ArrayList<Label> motorLabels = new ArrayList<>();
     private final ArrayList<Label> sensorLabels = new ArrayList<>();
+    private final ArrayList<Integer> sensorGroups = new ArrayList<>();
     private EventHandler<MouseEvent> cursorPosHandler;
     private EventHandler<MouseEvent> cursorInHandler;
     private EventHandler<MouseEvent> cursorOutHandler;
@@ -118,7 +120,7 @@ public class EditShoeView  extends Pane {
         sensorMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                addSensor(new Sensor(ShoeView.viewToShoeX(lastRightClick.get(0), model.getSide()), ShoeView.viewToShoeY(lastRightClick.get(1), model.getSide()), model.getSide()), sensorLabels.size() + 1);
+                addSensor(new Sensor(ShoeView.viewToShoeX(lastRightClick.get(0), model.getSide()), ShoeView.viewToShoeY(lastRightClick.get(1), model.getSide()), model.getSide(), 1), sensorLabels.size() + 1);
             }
         });
         // Add a motor at the location of the right click.
@@ -182,6 +184,7 @@ public class EditShoeView  extends Pane {
         
         // Motor.
         MotorView motorView = new MotorView(motor);
+        motorView.setFill(Color.RED);
 
         // Motor label.
         Label label = new Label("" + index);
@@ -273,7 +276,8 @@ public class EditShoeView  extends Pane {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem deleteMenuItem = new MenuItem("Delete");
         MenuItem moveMenuItem = new MenuItem("Move");
-        contextMenu.getItems().addAll(deleteMenuItem, moveMenuItem);
+        MenuItem changeGroupMenuItem = new MenuItem("Change group");
+        contextMenu.getItems().addAll(deleteMenuItem, moveMenuItem, changeGroupMenuItem);
         // Delete the sensor.
         deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -281,10 +285,11 @@ public class EditShoeView  extends Pane {
                 sensors.remove(sensorView);
                 int i = sensorLabels.indexOf(label);
                 sensorLabels.remove(label);
+                sensorGroups.remove(i);
                 getChildren().remove(sensorView);
                 getChildren().remove(label);
-                if (i < sensorLabels.size()) {
-                    for (int j = i; j < sensorLabels.size(); j++) {
+                if (index < sensorLabels.size()) {
+                    for (int j = index; j < sensorLabels.size(); j++) {
                         sensorLabels.get(j).setText("" + (j + 1));
                     }
                 }
@@ -297,7 +302,22 @@ public class EditShoeView  extends Pane {
                 new MoveNodeView(sensorView, model.getSide());
             }
         });
-
+        // Change the group of the sensor.
+        changeGroupMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int i = sensorLabels.indexOf(label);
+                if (sensorGroups.get(i) == 1) {
+                    sensorGroups.set(i, 2);
+                    sensorView.setFill(Color.BLUE);
+                }
+                else {
+                    sensorGroups.set(i, 1);
+                    sensorView.setFill(Color.color(0, 1, 0));
+                }
+            }
+        });
+        
         // Show the label only when the mouse is on the sensor.
         sensorView.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
             @Override
@@ -327,6 +347,10 @@ public class EditShoeView  extends Pane {
         // Add to Pane and List
         sensors.add(sensorView);
         sensorLabels.add(label);
+        sensorGroups.add(sensorView.getModel().getGroup());
+        if (sensorView.getModel().getGroup() != 1) {
+            sensorView.setFill(Color.BLUE);
+        }
         getChildren().addAll(sensorView, label);
     }
     
@@ -395,6 +419,14 @@ public class EditShoeView  extends Pane {
      */
     public ArrayList<SensorView> getSensors() {
         return sensors;
+    }
+    
+    /**
+     * Getter for the list of the sensors' groups.
+     * @return An ArrayList of the Sensors' groups.
+     */
+    public ArrayList<Integer> getSensorGroups() {
+        return sensorGroups;
     }
     
 }

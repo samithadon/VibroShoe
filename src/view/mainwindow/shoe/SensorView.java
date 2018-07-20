@@ -121,4 +121,12 @@ public class SensorView extends Circle {
         });
     }
     
+    /**
+     * Getter for the model of the SensorView.
+     * @return The model of the SensorView.
+     */
+    public Sensor getModel() {
+        return model;
+    }
+    
 }

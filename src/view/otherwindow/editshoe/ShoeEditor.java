@@ -87,7 +87,7 @@ public class ShoeEditor extends Stage {
                     yMotors.add(ShoeView.viewToShoeY(motorView.centerYProperty().getValue(), shoeView.getModel().getSide()));
                 }
                 menuController.stopReading();
-                menuController.updateShoeSettings(shoeView, xSensors, ySensors, xMotors, yMotors);
+                menuController.updateShoeSettings(shoeView, xSensors, ySensors, xMotors, yMotors, editShoeView.getSensorGroups());
                 hide();
             }
         });

@@ -20,6 +20,7 @@ public class Sensor {
     private final double x;
     private final double y;
     private final Side side;
+    private final int group;
     private final DoubleProperty value = new SimpleDoubleProperty(0);
     private final DoubleProperty pressure = new SimpleDoubleProperty(0);
 
@@ -28,13 +29,15 @@ public class Sensor {
      * @param x X coordinate of the motor in the coordinates system of the Shoe.
      * @param y Y coordinate of the motor in the coordinates system of the Shoe.
      * @param side Shoe side (left or right).
+     * @param group Group the sensor belongs to.
      * @see Sensor
      * @see Shoe
      */
-    public Sensor(double x, double y, Side side) {
+    public Sensor(double x, double y, Side side, int group) {
         this.x = x;
         this.y = y;
         this.side = side;
+        this.group = group;
     }
     
     /**
@@ -78,6 +81,14 @@ public class Sensor {
      */
     public Side getSide() {
         return side;
+    }
+    
+    /**
+     * Getter for the group of the sensor.
+     * @return the group of the sensor.
+     */
+    public int getGroup() {
+        return group;
     }
     
 }
