@@ -4,9 +4,6 @@ import exception.CSVFileException;
 import exception.OtherConnectPortException;
 import exception.UsedPortException;
 import exception.WrongPortException;
-import static java.lang.Thread.sleep;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -125,7 +122,7 @@ public class TimeController {
         public void run() {
             while (readCSV.getValue()) {
                 try {
-                    sleep((long)(1000 * step));
+                    Thread.sleep((long)(1000 * step));
                 } catch (InterruptedException ex) {}
                 if (play.getValue()) {
                     Platform.runLater(() -> next());
