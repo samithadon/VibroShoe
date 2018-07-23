@@ -1,5 +1,6 @@
 package view.otherwindow;
 
+import java.io.IOException;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -181,19 +182,23 @@ public class SerialSettingsView extends Stage {
         acceptButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                menuController.updateSerialSettings(menuController.getLeftShoe(),
-                                                    leftPortTextField.getText(),
-                                                    leftRateChoiceBox.getValue(),
-                                                    leftBitsChoiceBox.getValue(),
-                                                    doubleToStop(leftStopChoiceBox.getValue()),
-                                                    parityToInt(leftParityChoiceBox.getValue()));
-                menuController.updateSerialSettings(menuController.getRightShoe(),
-                                                    rightPortTextField.getText(),
-                                                    rightRateChoiceBox.getValue(),
-                                                    rightBitsChoiceBox.getValue(),
-                                                    doubleToStop(rightStopChoiceBox.getValue()),
-                                                    parityToInt(rightParityChoiceBox.getValue()));
-                hide();
+                try {
+                    menuController.updateSerialSettings(menuController.getLeftShoe(),
+                            leftPortTextField.getText(),
+                            leftRateChoiceBox.getValue(),
+                            leftBitsChoiceBox.getValue(),
+                            doubleToStop(leftStopChoiceBox.getValue()),
+                            parityToInt(leftParityChoiceBox.getValue()));
+                    menuController.updateSerialSettings(menuController.getRightShoe(),
+                            rightPortTextField.getText(),
+                            rightRateChoiceBox.getValue(),
+                            rightBitsChoiceBox.getValue(),
+                            doubleToStop(rightStopChoiceBox.getValue()),
+                            parityToInt(rightParityChoiceBox.getValue()));
+                    hide();
+                } catch (IOException | NumberFormatException ex) {
+                    (new ErrorWindow("Error updating serial settings!")).show();
+                }
             }
         });
         // Close the window.

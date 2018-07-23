@@ -10,6 +10,7 @@ import model.Shoe;
 import model.Shoe.Side;
 import model.TimeController;
 import view.mainwindow.MainView;
+import view.otherwindow.ErrorWindow;
 
 
 /**
@@ -34,25 +35,29 @@ public class Main extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
         
-        // Model.
-        shoeModelRight = new Shoe(Side.RIGHT);
-        shoeModelLeft = new Shoe(Side.LEFT);
-        timeController = new TimeController(shoeModelLeft, shoeModelRight);
-        MenuController menuController = new MenuController(timeController, shoeModelLeft, shoeModelRight);
-        
-        // View.
-        MainView mainView = new MainView(menuController, timeController, shoeModelLeft, shoeModelRight);
-        
-        // Initialize window.
-        String path = new File(".//.//ressources//logo.png").toURI().toString();
-        Image logoImage = new Image(path);
-        Scene scene = new Scene(mainView);
-        primaryStage.setTitle("Tactile Shoe Player");
-        primaryStage.getIcons().add(logoImage);
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        primaryStage.sizeToScene();
-        primaryStage.show();
+        try {
+            // Model.
+            shoeModelRight = new Shoe(Side.RIGHT);
+            shoeModelLeft = new Shoe(Side.LEFT);
+            timeController = new TimeController(shoeModelLeft, shoeModelRight);
+            MenuController menuController = new MenuController(timeController, shoeModelLeft, shoeModelRight);
+
+            // View.
+            MainView mainView = new MainView(menuController, timeController, shoeModelLeft, shoeModelRight);
+
+            // Initialize window.
+            String path = new File(".//.//ressources//logo.png").toURI().toString();
+            Image logoImage = new Image(path);
+            Scene scene = new Scene(mainView);
+            primaryStage.setTitle("Tactile Shoe Player");
+            primaryStage.getIcons().add(logoImage);
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
+            primaryStage.sizeToScene();
+            primaryStage.show();
+        } catch (Exception e) {
+            (new ErrorWindow("Error initializing software!\nPlease, check the setting files.")).show();
+        }
         
     }
     

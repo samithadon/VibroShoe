@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import view.mainwindow.shoe.ShoeView;
-import view.otherwindow.ErrorWindow;
 
 
 /**
@@ -30,13 +31,16 @@ public class Shoe {
     private final SerialReader serialReader;
     private final CSVReader csvReader;
     private final Side side;
+    private final IntegerProperty updated = new SimpleIntegerProperty(0);
     
     /**
      * Create a new instance of Shoe.
      * @param side Shoe side (left or right).
+     * @throws IOException TODO
+     * @throws NumberFormatException TODO
      * @see Shoe
      */
-    public Shoe(Side side) {
+    public Shoe(Side side) throws NumberFormatException, IOException {
         this.side = side;
         cop = new CoP(side);
         initialize();
@@ -49,12 +53,18 @@ public class Shoe {
      * right).
      */
     public static enum Side {
+        /**
+         * Right side.
+         */
         RIGHT {
             @Override
             public String toString() {
                 return "right";
             }
         },
+        /**
+         * Left side.
+         */
         LEFT {
             @Override
             public String toString() {
@@ -65,8 +75,10 @@ public class Shoe {
     
     /**
      * Initialize the shoe by initializing the sensors and the motors.
+     * @throws IOException TODO
+     * @throws NumberFormatException TODO
      */
-    private void initialize() {
+    private void initialize() throws NumberFormatException, IOException {
         initializeSensors();
         initializeMotors();
     }
@@ -81,75 +93,63 @@ public class Shoe {
     
     /**
      * Update the sensors and the motors.
+     * @throws IOException TODO
+     * @throws NumberFormatException TODO
      */
-    public void update() {
+    public void update() throws NumberFormatException, IOException {
         reset();
         initialize();
+        updated.setValue(updated.getValue() + 1);
     }
     
     /**
      * Read the position of the sensors in the settings file
      * (ressources/sensors[left or right].txt).
+     * @throws IOException TODO
+     * @throws NumberFormatException TODO
      */
-    private void initializeSensors() {
-        InputStream flux; 
-        try {
-            flux = new FileInputStream("././ressources/sensors" + side.toString() + ".txt");
-            BufferedReader buff;
-            try (InputStreamReader input = new InputStreamReader(flux)) {
-                buff = new BufferedReader(input);
-                String line;
-                while ((line = buff.readLine()) != null){
-                    if (line.length() > 0) {
-                        String[] coordinates = line.split(" ");
-                        double x = Double.parseDouble(coordinates[0]);
-                        double y = Double.parseDouble(coordinates[1]);
-                        int grp = Integer.parseInt(coordinates[2]);
-                        sensors.add(new Sensor(x, y, side, grp));
-                    }
-                }
+    private void initializeSensors() throws NumberFormatException, IOException {
+        InputStream flux = new FileInputStream("././ressources/sensors" + side.toString() + ".txt");
+        InputStreamReader input = new InputStreamReader(flux);
+        BufferedReader buff = new BufferedReader(input);
+        String line;
+        while ((line = buff.readLine()) != null){
+            if (line.length() > 0) {
+                String[] coordinates = line.split(" ");
+                double x = Double.parseDouble(coordinates[0]);
+                double y = Double.parseDouble(coordinates[1]);
+                int grp = Integer.parseInt(coordinates[2]);
+                sensors.add(new Sensor(x, y, side, grp));
             }
-            buff.close();
-            flux.close();
-        } catch (IOException | NumberFormatException ex) {
-            (new ErrorWindow("Error loading sensors!")).show();
         }
-    }
-    
-    /**
-     * Update the sensors.
-     */
-    public void updateSensors() {
-        sensors.clear();
-        initializeSensors();
+        buff.close();
+        input.close();
+        flux.close();
     }
     
     /**
      * Read the position of the motors in the settings file
      * (ressources/motors[left or right].txt).
+     * @throws IOException TODO
+     * @throws NumberFormatException TODO
      */
-    private void initializeMotors() {
-        InputStream flux; 
-        try {
-            flux = new FileInputStream("././ressources/motors" + side.toString() + ".txt");
-            BufferedReader buff;
-            try (InputStreamReader input = new InputStreamReader(flux)) {
-                buff = new BufferedReader(input);
-                String line;
-                while ((line = buff.readLine()) != null){
-                    if (line.length() > 0) {
-                        String[] coordinates = line.split(" ");
-                        double x = Double.parseDouble(coordinates[0]);
-                        double y = Double.parseDouble(coordinates[1]);
-                        motors.add(new Motor(x, y, side));
-                    }
-                }   
+    private void initializeMotors() throws IOException, NumberFormatException {
+        InputStream flux = new FileInputStream("././ressources/motors" + side.toString() + ".txt");
+        BufferedReader buff;
+        InputStreamReader input = new InputStreamReader(flux);
+        buff = new BufferedReader(input);
+        String line;
+        while ((line = buff.readLine()) != null){
+            if (line.length() > 0) {
+                String[] coordinates = line.split(" ");
+                double x = Double.parseDouble(coordinates[0]);
+                double y = Double.parseDouble(coordinates[1]);
+                motors.add(new Motor(x, y, side));
             }
-            buff.close();
-            flux.close();
-        } catch (IOException | NumberFormatException ex) {
-            (new ErrorWindow("Error loading motors!")).show();
         }
+        buff.close();
+        input.close();
+        flux.close();
     }
 
     /**
@@ -198,6 +198,14 @@ public class Shoe {
      */
     public CSVReader getCsvReader() {
         return csvReader;
+    }
+    
+    /**
+     * The value change when the shoe is updated.
+     * @return The updatedProperty of the Shoe.
+     */
+    public IntegerProperty updatedProperty() {
+        return updated;
     }
     
 }

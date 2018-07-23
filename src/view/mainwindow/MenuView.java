@@ -1,5 +1,6 @@
 package view.mainwindow;
 
+import java.io.IOException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import view.mainwindow.shoe.ShoeView;
@@ -12,6 +13,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import model.MenuController;
 import view.otherwindow.CSVSelector;
+import view.otherwindow.ErrorWindow;
 import view.otherwindow.SaveSelector;
 import view.otherwindow.SerialSettingsView;
 
@@ -117,22 +119,30 @@ public class MenuView extends MenuBar {
         allDataCheckMenuItem.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                onlySensorCheckMenuItem.setSelected(!newValue);
-                onlySensorCheckMenuItem.setDisable(false);
-                if (newValue) {
-                    allDataCheckMenuItem.setDisable(true);
-                    menuController.changeDataType(0);
+                try {
+                    onlySensorCheckMenuItem.setSelected(!newValue);
+                    onlySensorCheckMenuItem.setDisable(false);
+                    if (newValue) {
+                        allDataCheckMenuItem.setDisable(true);
+                        menuController.changeDataType(0);
+                    }
+                } catch (IOException | NumberFormatException e) {
+                    (new ErrorWindow("Error changing data type!")).show();
                 }
             }
         });
         onlySensorCheckMenuItem.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                allDataCheckMenuItem.setSelected(!newValue);
-                allDataCheckMenuItem.setDisable(false);
-                if (newValue) {
-                    onlySensorCheckMenuItem.setDisable(true);
-                    menuController.changeDataType(1);
+                try {
+                    allDataCheckMenuItem.setSelected(!newValue);
+                    allDataCheckMenuItem.setDisable(false);
+                    if (newValue) {
+                        onlySensorCheckMenuItem.setDisable(true);
+                        menuController.changeDataType(1);
+                    }
+                } catch (IOException | NumberFormatException e) {
+                    (new ErrorWindow("Error changing data type!")).show();
                 }
             }
         });

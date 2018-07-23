@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.image.Image;
@@ -51,6 +53,12 @@ public class ShoeView extends Pane {
         this.model = model;
         this.setting = setting;
         initialize();
+        model.updatedProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                update();
+            }
+        });
     }
     
     /**
@@ -58,7 +66,7 @@ public class ShoeView extends Pane {
      * Create all the components of the ShoeView and implements some
      * interactions.
      */
-    public void initialize() {
+    private void initialize() {
         
         // Border.
         setStyle("-fx-border-width: 1 0 1 0;-fx-border-color: black");
@@ -192,7 +200,7 @@ public class ShoeView extends Pane {
     /**
      * Reset and initialize the ShoeView.
      */
-    public void update() {
+    private void update() {
         reset();
         initialize();
     }

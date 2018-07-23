@@ -299,7 +299,7 @@ public class EditShoeView  extends Pane {
         moveMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                new MoveNodeView(sensorView, model.getSide());
+                (new MoveNodeView(sensorView, model.getSide())).show();
             }
         });
         // Change the group of the sensor.

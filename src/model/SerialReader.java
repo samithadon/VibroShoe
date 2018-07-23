@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import view.otherwindow.ErrorWindow;
 
 
 /**
@@ -27,7 +26,7 @@ import view.otherwindow.ErrorWindow;
  * class which need them.
  * @author Loïc David
  */
-public final class SerialReader {
+public class SerialReader {
     
     private String port;
     private int dataRate;
@@ -47,9 +46,11 @@ public final class SerialReader {
     /**
      * Create a new instance of SerialReader.
      * @param shoeModel The model of the shoe the SerialReader belongs to.
+     * @throws IOException TODO
+     * @throws NumberFormatException TODO
      * @see SerialReader
      */
-    public SerialReader (Shoe shoeModel) {
+    public SerialReader (Shoe shoeModel) throws IOException, NumberFormatException {
         this.shoeModel = shoeModel;
         String h = "time;";
         for (int i = 1; i < 17; i++) {
@@ -70,30 +71,27 @@ public final class SerialReader {
     /**
      * Read the parameters of the serial link in the setting file
      * (ressources/[left or right]shoe.txt).
+     * @throws IOException TODO
+     * @throws NumberFormatException TODO
      */
-    public void initializeParameters() {
+    public void initializeParameters() throws IOException, NumberFormatException {
         InputStream flux;
-        try {
-            flux = new FileInputStream("././ressources/serial" + shoeModel.getSide().toString() + ".txt");
-            BufferedReader buff;
-            try (InputStreamReader inputStreamReader = new InputStreamReader(flux)) {
-                buff = new BufferedReader(inputStreamReader);
-                String line;
-                port = buff.readLine();
-                line = buff.readLine();
-                dataRate = Integer.parseInt(line);
-                line = buff.readLine();
-                dataBits = Integer.parseInt(line);
-                line = buff.readLine();
-                stopBits = Integer.parseInt(line);
-                line = buff.readLine();
-                parity = Integer.parseInt(line);
-            }
-            buff.close();
-            flux.close();
-        } catch (IOException | NumberFormatException ex) {
-            (new ErrorWindow("Error loading parameters (" + shoeModel.getSide().toString() + " shoe)!")).show();
-        }
+        flux = new FileInputStream("././ressources/serial" + shoeModel.getSide().toString() + ".txt");
+        InputStreamReader inputStreamReader = new InputStreamReader(flux);
+        BufferedReader buff = new BufferedReader(inputStreamReader);
+        String line;
+        port = buff.readLine();
+        line = buff.readLine();
+        dataRate = Integer.parseInt(line);
+        line = buff.readLine();
+        dataBits = Integer.parseInt(line);
+        line = buff.readLine();
+        stopBits = Integer.parseInt(line);
+        line = buff.readLine();
+        parity = Integer.parseInt(line);
+        buff.close();
+        inputStreamReader.close();
+        flux.close();
     }
     
     /**

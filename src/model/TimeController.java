@@ -11,7 +11,6 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import view.otherwindow.ErrorWindow;
 
 
 /**
@@ -78,31 +77,28 @@ public class TimeController {
 
     /**
      * Initialize the CSV reading.
+     * @throws CSVFileException TODO
      */
-    public void initializeCSVRead() {
+    public void initializeCSVRead() throws CSVFileException {
+        // Stop the previous reading (CSV or serial).
+        time.unbind();
+        sleep.setValue(false);
+        serial.setValue(false);
+        readCSV.setValue(false);
         try {
-            // Stop the previous reading (CSV or serial).
-            time.unbind();
-            sleep.setValue(false);
-            serial.setValue(false);
-            readCSV.setValue(false);
-            try {
-                Thread.sleep((long)(1500 * step));
-            } catch (InterruptedException ex) {
-                throw new CSVFileException();
-            }
-            play.setValue(false);
-            // Start the new one.
-            loadIndexTotalTime();
-            loadStep();
-            indexTime.setValue(0);
-            time.setValue(0);
-            update();
-            readCSV.setValue(true);
-            (new Timer()).start();
-        } catch (CSVFileException ex) {
-            (new ErrorWindow((ex.toString()))).show();
+            Thread.sleep((long)(1500 * step));
+        } catch (InterruptedException ex) {
+            throw new CSVFileException();
         }
+        play.setValue(false);
+        // Start the new one.
+        loadIndexTotalTime();
+        loadStep();
+        indexTime.setValue(0);
+        time.setValue(0);
+        update();
+        readCSV.setValue(true);
+        (new Timer()).start();
     }
     
     /**
@@ -165,8 +161,11 @@ public class TimeController {
     
     /**
      * Start and stop the recording of serial data.
+     * @throws WrongPortException TODO
+     * @throws UsedPortException TODO
+     * @throws OtherConnectPortException TODO
      */
-    public void recordStop() {
+    public void recordStop() throws WrongPortException, UsedPortException, OtherConnectPortException {
         if (play.getValue()) {
             play.setValue(false);
             rightShoe.getSerialReader().stopRead();
@@ -175,19 +174,11 @@ public class TimeController {
             leftShoe.getSerialReader().closePort();
         }
         else {
-            try {
-                rightShoe.getSerialReader().connect();
-                leftShoe.getSerialReader().connect();
-                play.setValue(true);
-                rightShoe.getSerialReader().startRead();
-                leftShoe.getSerialReader().startRead();
-            } catch (WrongPortException ex) {
-                (new ErrorWindow(ex.toString())).show();
-            } catch (UsedPortException ex) {
-                (new ErrorWindow(ex.toString())).show();
-            } catch (OtherConnectPortException ex) {
-                (new ErrorWindow(ex.toString())).show();
-            }
+            rightShoe.getSerialReader().connect();
+            leftShoe.getSerialReader().connect();
+            play.setValue(true);
+            rightShoe.getSerialReader().startRead();
+            leftShoe.getSerialReader().startRead();
         }
     }
     

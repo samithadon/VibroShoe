@@ -1,6 +1,7 @@
 package view.otherwindow;
 
 import java.io.File;
+import java.io.IOException;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -75,7 +76,11 @@ public class SaveSelector extends Stage {
         acceptButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                menuController.saveData(leftTextField.getText(), rightTextField.getText());
+                try {
+                    menuController.saveData(leftTextField.getText(), rightTextField.getText());
+                } catch (IOException ex) {
+                    (new ErrorWindow("Error saving data!")).show();
+                }
                 hide();
             }
         });

@@ -1,6 +1,8 @@
 package view.mainwindow;
 
-import java.awt.Toolkit;
+import exception.OtherConnectPortException;
+import exception.UsedPortException;
+import exception.WrongPortException;
 import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import model.TimeController;
+import view.otherwindow.ErrorWindow;
 
 
 /**
@@ -122,8 +125,15 @@ public class TimeView extends HBox {
         recordStop = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Toolkit.getDefaultToolkit().beep();
-                timeController.recordStop();
+                try {
+                    timeController.recordStop();
+                } catch (WrongPortException ex) {
+                    (new ErrorWindow(ex.toString())).show();
+                } catch (UsedPortException ex) {
+                    (new ErrorWindow(ex.toString())).show();
+                } catch (OtherConnectPortException ex) {
+                    (new ErrorWindow(ex.toString())).show();
+                }
             }
         };
         // Change the image of the button in function of the mod.

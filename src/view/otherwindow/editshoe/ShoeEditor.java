@@ -1,5 +1,6 @@
 package view.otherwindow.editshoe;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,6 +17,7 @@ import model.Sensor;
 import view.mainwindow.shoe.MotorView;
 import view.mainwindow.shoe.SensorView;
 import view.mainwindow.shoe.ShoeView;
+import view.otherwindow.ErrorWindow;
 
 
 /**
@@ -74,20 +76,24 @@ public class ShoeEditor extends Stage {
         acceptButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ArrayList<Double> xSensors = new ArrayList<>();
-                ArrayList<Double> ySensors = new ArrayList<>();
-                ArrayList<Double> xMotors = new ArrayList<>();
-                ArrayList<Double> yMotors = new ArrayList<>();
-                for (SensorView sensorView : editShoeView.getSensors()){
-                    xSensors.add(ShoeView.viewToShoeX(sensorView.centerXProperty().getValue(), shoeView.getModel().getSide()));
-                    ySensors.add(ShoeView.viewToShoeY(sensorView.centerYProperty().getValue(), shoeView.getModel().getSide()));
+                try {
+                    ArrayList<Double> xSensors = new ArrayList<>();
+                    ArrayList<Double> ySensors = new ArrayList<>();
+                    ArrayList<Double> xMotors = new ArrayList<>();
+                    ArrayList<Double> yMotors = new ArrayList<>();
+                    for (SensorView sensorView : editShoeView.getSensors()){
+                        xSensors.add(ShoeView.viewToShoeX(sensorView.centerXProperty().getValue(), shoeView.getModel().getSide()));
+                        ySensors.add(ShoeView.viewToShoeY(sensorView.centerYProperty().getValue(), shoeView.getModel().getSide()));
+                    }
+                    for (MotorView motorView : editShoeView.getMotors()){
+                        xMotors.add(ShoeView.viewToShoeX(motorView.centerXProperty().getValue(), shoeView.getModel().getSide()));
+                        yMotors.add(ShoeView.viewToShoeY(motorView.centerYProperty().getValue(), shoeView.getModel().getSide()));
+                    }
+                    menuController.stopReading();
+                    menuController.updateShoeSettings(shoeView.getModel().getSide(), xSensors, ySensors, xMotors, yMotors, editShoeView.getSensorGroups());
+                } catch (IOException | NumberFormatException ex) {
+                    (new ErrorWindow("Error updating shoe settings!")).show();
                 }
-                for (MotorView motorView : editShoeView.getMotors()){
-                    xMotors.add(ShoeView.viewToShoeX(motorView.centerXProperty().getValue(), shoeView.getModel().getSide()));
-                    yMotors.add(ShoeView.viewToShoeY(motorView.centerYProperty().getValue(), shoeView.getModel().getSide()));
-                }
-                menuController.stopReading();
-                menuController.updateShoeSettings(shoeView, xSensors, ySensors, xMotors, yMotors, editShoeView.getSensorGroups());
                 hide();
             }
         });

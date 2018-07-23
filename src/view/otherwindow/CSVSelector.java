@@ -1,5 +1,6 @@
 package view.otherwindow;
 
+import exception.CSVFileException;
 import java.io.File;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -78,7 +79,11 @@ public class CSVSelector extends Stage {
         acceptButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                menuController.readCSV(leftTextField.getText(), rightTextField.getText());
+                try {
+                    menuController.readCSV(leftTextField.getText(), rightTextField.getText());
+                } catch (CSVFileException ex) {
+                    (new ErrorWindow(ex.toString())).show();
+                }
                 hide();
             }
         });
