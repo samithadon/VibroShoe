@@ -35,8 +35,9 @@ public class MenuController {
      * @param timeController The TimeController of the software.
      * @param leftShoe The left Shoe of the software.
      * @param rightShoe The right Shoe of the software.
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException Throw when there is an issue to load the data type.
+     * @throws NumberFormatException Throw when the data type loaded from the
+     * setting file cannot be converted to int.
      * @see MenuController
      */
     public MenuController(TimeController timeController, Shoe leftShoe, Shoe rightShoe) throws IOException, NumberFormatException {
@@ -63,7 +64,7 @@ public class MenuController {
      * TimeController for the CSV reading.
      * @param leftFile CSV file for the left shoe.
      * @param rightFile CSV file for the right shoe.
-     * @throws CSVFileException TODO
+     * @throws CSVFileException The CSV file cannot be read.
      * @see TimeController
      */
     public void readCSV(String leftFile, String rightFile) throws CSVFileException {
@@ -96,7 +97,7 @@ public class MenuController {
      * This method just copies these files into the files specified by the user.
      * @param leftPath CSV output file for the left shoe.
      * @param rightPath CSV output file for the right shoe.
-     * @throws IOException TODO
+     * @throws IOException The data cannot be saved.
      */
     public void saveData(String leftPath, String rightPath) throws IOException {
         File leftSource = new File("././ressources/savedataleft.csv");
@@ -122,8 +123,9 @@ public class MenuController {
      * @param bits Data bits.
      * @param stop Stop bits.
      * @param parity Parity.
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException The serial setting cannot be updated.
+     * @throws NumberFormatException The settings loaded from the setting file
+     * cannot be converted to the desired format.
      * @see SerialReader
      */
     public void updateSerialSettings(Shoe shoe, String port, int rate, int bits, int stop, int parity) throws IOException, NumberFormatException {
@@ -138,8 +140,9 @@ public class MenuController {
     /**
      * Set the shoes data type by reading it from the save file.
      * (ressources/datatype.txt)
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException The data type cannot be loaded.
+     * @throws NumberFormatException The data type loaded from the setting file
+     * cannot be converted to int.
      */
     public void loadDataType() throws IOException, NumberFormatException {
         InputStream flux;
@@ -160,7 +163,7 @@ public class MenuController {
     /**
      * Update the save file containing the data type.
      * @param type 0 for "All data", 1 for "Only sensors".
-     * @throws IOException TODO
+     * @throws IOException The data type cannot be saved.
      */
     private void saveDataType(int type) throws IOException {
         FileWriter fileWriter = new FileWriter("././ressources/datatype.txt");
@@ -173,8 +176,9 @@ public class MenuController {
     /**
      * Change the data type.
      * @param type 0 for "All data", 1 for "Only sensors".
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException The data type cannot be changed.
+     * @throws NumberFormatException The data type loaded from the setting file
+     * cannot be converted to int.
      */
     public void changeDataType(int type) throws IOException, NumberFormatException {
         saveDataType(type);
@@ -193,8 +197,8 @@ public class MenuController {
      * @param yMotors List of the Y coordinates of the motors in the
      * coordinate system of the shoe.
      * @param sensorGroups List of the groups of the sensors.
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException The shoe settings cannot be updated.
+     * @throws NumberFormatException Issue to convert data from a setting file.
      * @see Shoe
      * @see Sensor
      * @see Motor

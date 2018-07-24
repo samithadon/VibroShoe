@@ -77,7 +77,7 @@ public class TimeController {
 
     /**
      * Initialize the CSV reading.
-     * @throws CSVFileException TODO
+     * @throws CSVFileException Issue to read the CSV files.
      */
     public void initializeCSVRead() throws CSVFileException {
         // Stop the previous reading (CSV or serial).
@@ -161,9 +161,9 @@ public class TimeController {
     
     /**
      * Start and stop the recording of serial data.
-     * @throws WrongPortException TODO
-     * @throws UsedPortException TODO
-     * @throws OtherConnectPortException TODO
+     * @throws WrongPortException The port cannot be found.
+     * @throws UsedPortException The port is already used.
+     * @throws OtherConnectPortException All other issues.
      */
     public void recordStop() throws WrongPortException, UsedPortException, OtherConnectPortException {
         if (play.getValue()) {

@@ -36,8 +36,9 @@ public class Shoe {
     /**
      * Create a new instance of Shoe.
      * @param side Shoe side (left or right).
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException Issue to access the files containing the settings.
+     * @throws NumberFormatException Issue to convert the data from the setting
+     * files.
      * @see Shoe
      */
     public Shoe(Side side) throws NumberFormatException, IOException {
@@ -75,8 +76,9 @@ public class Shoe {
     
     /**
      * Initialize the shoe by initializing the sensors and the motors.
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException Issue to access the files containing the settings.
+     * @throws NumberFormatException Issue to convert the data from the setting
+     * files.
      */
     private void initialize() throws NumberFormatException, IOException {
         initializeSensors();
@@ -93,8 +95,9 @@ public class Shoe {
     
     /**
      * Update the sensors and the motors.
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException Issue to access the files containing the settings.
+     * @throws NumberFormatException Issue to convert the data from the setting
+     * files.
      */
     public void update() throws NumberFormatException, IOException {
         reset();
@@ -105,8 +108,9 @@ public class Shoe {
     /**
      * Read the position of the sensors in the settings file
      * (ressources/sensors[left or right].txt).
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException Issue to access the file containing the sensor data.
+     * @throws NumberFormatException Issue to convert the data from the setting
+     * file.
      */
     private void initializeSensors() throws NumberFormatException, IOException {
         InputStream flux = new FileInputStream("././ressources/sensors" + side.toString() + ".txt");
@@ -130,8 +134,9 @@ public class Shoe {
     /**
      * Read the position of the motors in the settings file
      * (ressources/motors[left or right].txt).
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException Issue to access the file containing the motor data.
+     * @throws NumberFormatException Issue to convert the data from the setting
+     * file.
      */
     private void initializeMotors() throws IOException, NumberFormatException {
         InputStream flux = new FileInputStream("././ressources/motors" + side.toString() + ".txt");

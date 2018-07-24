@@ -46,8 +46,8 @@ public class SerialReader {
     /**
      * Create a new instance of SerialReader.
      * @param shoeModel The model of the shoe the SerialReader belongs to.
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException The parameters cannot be loaded.
+     * @throws NumberFormatException Issue to convert data from a setting file.
      * @see SerialReader
      */
     public SerialReader (Shoe shoeModel) throws IOException, NumberFormatException {
@@ -71,8 +71,8 @@ public class SerialReader {
     /**
      * Read the parameters of the serial link in the setting file
      * (ressources/[left or right]shoe.txt).
-     * @throws IOException TODO
-     * @throws NumberFormatException TODO
+     * @throws IOException The parameters cannot be loaded.
+     * @throws NumberFormatException Issue to convert data from a setting file.
      */
     public void initializeParameters() throws IOException, NumberFormatException {
         InputStream flux;
