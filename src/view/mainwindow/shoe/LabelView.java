@@ -97,14 +97,26 @@ public class LabelView extends Pane {
             public void handle(MouseEvent event) {
                 double newX = label.getLayoutX() + event.getX() - x0;
                 double newY = label.getLayoutY() + event.getY() - y0;
-                if (newX <= 262 - getLayoutX() - label.getWidth() && newX > -getLayoutX()) {
+                if (newX > 262 - getLayoutX() - label.getWidth()) {
+                    label.setLayoutX(262 - getLayoutX() - label.getWidth());
+                }
+                else if (newX < -getLayoutX()) {
+                    label.setLayoutX(-getLayoutX());
+                }
+                else {
                     label.setLayoutX(newX);
-                    line.setEndX(line.getEndX() + event.getX() - x0);
                 }
-                if (newY <= 586 - getLayoutY() - label.getHeight() && newY > -getLayoutY()) {
+                if (newY > 586 - getLayoutY() - label.getHeight()) {
+                    label.setLayoutY(586 - getLayoutY() - label.getHeight());
+                }
+                else if (newY < -getLayoutY()) {
+                    label.setLayoutY(-getLayoutY());
+                }
+                else {
                     label.setLayoutY(newY);
-                    line.setEndY(line.getEndY() + event.getY() - y0);
                 }
+                line.setEndX(label.getLayoutX() + label.getWidth() / 2);
+                line.setEndY(label.getLayoutY() + label.getHeight()/ 2);
                 event.consume();
             }
         };
