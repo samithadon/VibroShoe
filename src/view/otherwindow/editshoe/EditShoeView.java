@@ -2,6 +2,7 @@ package view.otherwindow.editshoe;
 
 import java.io.File;
 import java.util.ArrayList;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
@@ -16,6 +17,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import model.Motor;
 import model.Sensor;
@@ -110,6 +112,33 @@ public class EditShoeView  extends Pane {
             addSensor(sensor, i);
             i++;
         }
+        
+        // Legend.
+        Circle motorCircle = new Circle(10, 546, 5, Color.color(1, 0, 0));
+        motorCircle.setStroke(Color.BLACK);
+        Circle sensorG1Circle = new Circle(10, 576, 3, Color.color(0, 1, 0));
+        sensorG1Circle.setStroke(Color.BLACK);
+        Circle sensorG2Circle = new Circle(135, 576, 3, Color.color(0, 0, 1));
+        sensorG2Circle.setStroke(Color.BLACK);
+        Label motorLabel = new Label("Motor");
+        motorLabel.setTextFill(Color.color(1, 0, 0));
+        motorLabel.setStyle("-fx-font-weight: bold");
+        motorLabel.setLayoutX(20);
+        Label sensorG1Label = new Label("Sensor grp 1");
+        sensorG1Label.setTextFill(Color.color(0, 1, 0));
+        sensorG1Label.setStyle("-fx-font-weight: bold");
+        sensorG1Label.setLayoutX(20);
+        Label sensorG2Label = new Label("Sensor grp 2");
+        sensorG2Label.setTextFill(Color.color(0, 0, 1));
+        sensorG2Label.setStyle("-fx-font-weight: bold");
+        sensorG2Label.setLayoutX(145);
+        getChildren().addAll(motorCircle, motorLabel, sensorG1Circle, sensorG1Label, sensorG2Circle, sensorG2Label);
+        Platform.runLater(() -> {
+            motorLabel.setLayoutY(546 - motorLabel.getHeight() / 2);
+            sensorG1Label.setLayoutY(576 - sensorG1Label.getHeight() / 2);
+            sensorG2Label.setLayoutY(576 - sensorG2Label.getHeight() / 2);
+        });
+        
         
         // Context menu.
         ContextMenu contextMenu = new ContextMenu();
@@ -243,8 +272,24 @@ public class EditShoeView  extends Pane {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY)) {
-                    motorView.setCenterX(event.getX());
-                    motorView.setCenterY(event.getY());
+                    if (event.getX() > 262) {
+                        motorView.setCenterX(262);
+                    }
+                    else if (event.getX() < 0) {
+                        motorView.setCenterX(0);
+                    }
+                    else {
+                        motorView.setCenterX(event.getX());
+                    }
+                    if (event.getY() > 586) {
+                        motorView.setCenterY(586);
+                    }
+                    else if (event.getY() < 0) {
+                        motorView.setCenterY(0);
+                    }
+                    else {
+                        motorView.setCenterY(event.getY());
+                    }
                 }
             }
         });
@@ -338,8 +383,24 @@ public class EditShoeView  extends Pane {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY)) {
-                    sensorView.setCenterX(event.getX());
-                    sensorView.setCenterY(event.getY());
+                    if (event.getX() > 262) {
+                        sensorView.setCenterX(262);
+                    }
+                    else if (event.getX() < 0) {
+                        sensorView.setCenterX(0);
+                    }
+                    else {
+                        sensorView.setCenterX(event.getX());
+                    }
+                    if (event.getY() > 586) {
+                        sensorView.setCenterY(586);
+                    }
+                    else if (event.getY() < 0) {
+                        sensorView.setCenterY(0);
+                    }
+                    else {
+                        sensorView.setCenterY(event.getY());
+                    }
                 }
             }
         });
