@@ -108,7 +108,7 @@ public class MenuView extends MenuBar {
         settingsMenu.getItems().addAll(serialSettingsMenu, leftShoeMenuItem, rightShoeMenuItem);
         
         // Initialize CheckMenuItems.
-        if (menuController.getLeftShoe().getSerialReader().getDataType() == 0) {
+        if (menuController.getLeftShoe().getSerialReader().dataTypeProperty().getValue() == 0) {
             allDataCheckMenuItem.setSelected(true);
             allDataCheckMenuItem.setDisable(true);
         }

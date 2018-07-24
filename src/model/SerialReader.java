@@ -17,7 +17,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 
 /**
@@ -33,7 +35,7 @@ public class SerialReader {
     private int dataBits;
     private int stopBits;
     private int parity;
-    private int dataType;
+    private final IntegerProperty dataType = new SimpleIntegerProperty();
     private boolean record = false;
     private final Shoe shoeModel;
     private final DoubleProperty time = new SimpleDoubleProperty(0);
@@ -189,7 +191,7 @@ public class SerialReader {
                 double t = Double.parseDouble(data[0]);
                 time.setValue(t);
                 // Data type = "All data".
-                if (dataType == 0) {
+                if (dataType.getValue() == 0) {
                     for (int i = 1; i < shoeModel.getSensors().size() + 1; i++) {
                         shoeModel.getSensors().get(i - 1).valueProperty().setValue(Double.parseDouble(data[i]));
                     }
@@ -370,19 +372,20 @@ public class SerialReader {
     }
     
     /**
-     * Getter for the data type.
-     * @return The data type.
+     * Contain the type of data read by the serial link. (0 for "All data", 1
+     * for "Only sensors").
+     * @return The dataTypeProperty of the SerialReader.
      */
-    public int getDataType() {
+    public IntegerProperty dataTypeProperty() {
         return dataType;
     }
     
     /**
      * Setter for the data type.
-     * @param dataType 0 for "All data", 1 for "Only sensors".
+     * @param i 0 for "All data", 1 for "Only sensors".
      */
-    public void setDataType(int dataType) {
-        this.dataType = dataType;
+    public void setDataType(int i) {
+        dataType.setValue(i);
     }
       
 }

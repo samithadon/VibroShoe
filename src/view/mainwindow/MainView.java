@@ -66,7 +66,7 @@ public class MainView extends VBox {
         ShoeView shoeViewLeft = new ShoeView(shoeModelLeft, shoeSettingsViewLeft);
         CoordinatesView leftCoordinates = new CoordinatesView(shoeViewLeft);
         // Others.
-        LegendView legendView = new LegendView();
+        LegendView legendView = new LegendView(shoeModelLeft);
         MenuView menuView = new MenuView(menuController, shoeViewLeft, shoeViewRight);
         TimeView timeView = new TimeView(timeController);
         

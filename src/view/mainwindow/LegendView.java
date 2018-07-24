@@ -1,6 +1,8 @@
 package view.mainwindow;
 
 import java.io.File;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.TextAlignment;
+import model.Shoe;
 import view.mainwindow.shoe.MotorView;
 import view.mainwindow.shoe.SensorView;
 
@@ -22,11 +25,14 @@ import view.mainwindow.shoe.SensorView;
  */
 public class LegendView extends GridPane {
     
+    private final Shoe shoe;
+    
     /**
      * Create a new instance of LegendView.
      * @see LegendView
      */
-    public LegendView() {
+    public LegendView(Shoe shoe) {
+        this.shoe = shoe;
         initialize();
     }
 
@@ -46,6 +52,14 @@ public class LegendView extends GridPane {
         col2.setHalignment(HPos.CENTER);
         
         // Create components.
+        Label dataTypeLabel = new Label();
+        dataTypeLabel.setTextAlignment(TextAlignment.CENTER);
+        if (shoe.getSerialReader().dataTypeProperty().getValue() == 0) {
+            dataTypeLabel.setText("Serial data type:\nAll data");
+        }
+        else {
+            dataTypeLabel.setText("Serial data type:\nOnly sensors");
+        }
         Label motorLabel = new Label("Motor\n(%)");
         motorLabel.setTextAlignment(TextAlignment.CENTER);
         Label sensorLabel = new Label("Sensor\n(mmHg)");
@@ -55,12 +69,26 @@ public class LegendView extends GridPane {
         ImageView motorLegend = new ImageView(new Image(pathMotor));
         ImageView sensorLegend = new ImageView(new Image(pathSensor));
         
+        // Add interactions to components.
+        shoe.getSerialReader().dataTypeProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if (newValue.intValue() == 0) {
+                    dataTypeLabel.setText("Serial data type:\nAll data");
+                }
+                else {
+                    dataTypeLabel.setText("Serial data type:\nOnly sensors");
+                }
+            }
+        });
+        
         // Add components to the grid.
         getColumnConstraints().addAll(col1, col2);
-        add(motorLabel, 0, 0);
-        add(sensorLabel, 1, 0);
-        add(motorLegend, 0, 1);
-        add(sensorLegend, 1, 1);
+        add(dataTypeLabel, 0, 0, 2, 1);
+        add(motorLabel, 0, 1);
+        add(sensorLabel, 1, 1);
+        add(motorLegend, 0, 2);
+        add(sensorLegend, 1, 2);
         
     }
     
