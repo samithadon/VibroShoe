@@ -2,6 +2,8 @@ package main;
 
 import java.io.File;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -21,9 +23,9 @@ import view.otherwindow.ErrorWindow;
  */
 public class Main extends Application{
     
-    TimeController timeController;
-    Shoe shoeModelRight;
-    Shoe shoeModelLeft;
+    private TimeController timeController;
+    private Shoe shoeModelRight;
+    private Shoe shoeModelLeft;
     
     /**
      * Method used to start the software.<br>
@@ -54,6 +56,33 @@ public class Main extends Application{
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.sizeToScene();
+            
+            // Link title to the mod.
+            timeController.serialProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        primaryStage.setTitle("Tactile Shoe Player - Serial reading");
+                    }
+                }
+            });
+            timeController.readCSVProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        primaryStage.setTitle("Tactile Shoe Player - CSV reading");
+                    }
+                }
+            });
+            timeController.sleepProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        primaryStage.setTitle("Tactile Shoe Player");
+                    }
+                }
+            });
+            
             primaryStage.show();
         } catch (Exception e) {
             (new ErrorWindow("Error initializing software!\nPlease, check the setting files.")).show();
