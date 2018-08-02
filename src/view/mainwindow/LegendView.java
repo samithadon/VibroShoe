@@ -29,6 +29,7 @@ public class LegendView extends GridPane {
     
     /**
      * Create a new instance of LegendView.
+     * @param shoe One of the Shoe (used to know the data type).
      * @see LegendView
      */
     public LegendView(Shoe shoe) {
